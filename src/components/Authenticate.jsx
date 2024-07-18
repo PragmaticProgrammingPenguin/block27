@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Authenticate( {token} ){
+export default function Authenticate( { token } ){
     const [successMessage, setSuccessMessage] = useState(null);
     const [error, setError] = useState(null);
 
@@ -18,7 +18,9 @@ export default function Authenticate( {token} ){
             )
             const result = await response.json();
             setSuccessMessage(result.message);
-        } catch{
+            console.log(result.data.username);
+            {successMessage && <p>Username: {result.data.username}</p>}
+        } catch (error){
             setError(error.message);
         }
     }

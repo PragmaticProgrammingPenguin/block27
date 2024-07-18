@@ -7,12 +7,28 @@ export default function SignUpForm( {setToken} ) {
 
     async function handleSubmit(event){
         event.preventDefault();
+        if (!username || !password){
+            alert("Please enter a valid username / password");
+            return;
+        }
         try{
-            const response = await fetch("https://fsa-jwt-practice.herokuapp.com/signup");
+            const response = await fetch("https://fsa-jwt-practice.herokuapp.com/signup", {
+                method:"POST",
+                body: JSON.stringify({ username, password }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
             const result = await response.json();
-            setToken(result.token)
-            console.log(result);
-        } catch {
+            if(result.success){
+                setError(null);
+                setUsername('');
+                setPassword('');
+                alert("Successfully signed up");
+                setToken(result.token)
+                console.log(result)
+            }
+        } catch (error){
             setError(error.message);
         }
     }
@@ -23,12 +39,17 @@ export default function SignUpForm( {setToken} ) {
             {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <label>
-                    Username: <input value={username} onChange={(e) => setUsername(e.target.value)} />
+                    Username: <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
                 </label>
                 <label>
-                    Password: <input value={password} onChange={(e) => setPassword(e.target.value)} />
+                    Password: <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </label>
-                <button>Submit</button>
+                <button onClick={(e) => {
+                    if(username.length < 7 || username.length > 10){
+                        e.preventDefault();
+                        alert("Please enter username greater than 7 but less than 10.");
+                    }
+                }}>Submit</button>
             </form>
         </>
     );
